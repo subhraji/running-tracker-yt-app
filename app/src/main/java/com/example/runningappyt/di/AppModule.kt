@@ -13,7 +13,6 @@ import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-/*
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -31,4 +30,4 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRunDao(db: RunningDatabase) = db.getRunDao()
-}*/
+}
