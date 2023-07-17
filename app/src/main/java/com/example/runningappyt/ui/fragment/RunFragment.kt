@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.runningappyt.R
@@ -57,7 +58,8 @@ class RunFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 "You need to accept the permissions to use the app.",
                 REQUEST_CODE_LOCATION_PERMISSIONS,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS,
             )
         }else{
             EasyPermissions.requestPermissions(
@@ -66,7 +68,8 @@ class RunFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 REQUEST_CODE_LOCATION_PERMISSIONS,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS,
             )
         }
     }
