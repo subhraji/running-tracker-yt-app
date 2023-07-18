@@ -3,7 +3,7 @@ package com.example.runningappyt.other
 import android.graphics.Color
 
 object Constants {
-    const val RUNNING_DATABASE_NAME = "running_db"
+    const val RUNNING_DATABASE_NAME = "running_db.db"
     const val REQUEST_CODE_LOCATION_PERMISSIONS = 0
     const val ACTION_START_OR_RESUME_SERVICE = "ON_START_OR_RESUME_SERVICE"
     const val ACTION_PAUSE_SERVICE = "ON_PAUSE_SERVICE"
