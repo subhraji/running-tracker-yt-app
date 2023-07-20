@@ -1,5 +1,7 @@
 package com.example.runningappyt.ui.fragment
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
@@ -39,6 +42,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import java.util.Calendar
 import kotlin.math.round
 
@@ -254,9 +258,27 @@ class TrackingFragment : Fragment() {
         dialog.show()
     }
 
+
+    private fun isMyServiceRunning(mClass: Class<TrackingService>): Boolean{
+
+        val manager = requireContext().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        for(service: ActivityManager.RunningServiceInfo in manager.getRunningServices(Integer.MAX_VALUE)){
+
+            if(mClass.name.equals(service.service.className)){
+                return true
+            }
+        }
+        return false
+    }
+
     private fun stopRun(){
-        startCommandToService(ACTION_STOP_SERVICE)
-        findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
+        if(isMyServiceRunning(TrackingService::class.java)){
+            startCommandToService(ACTION_STOP_SERVICE)
+            findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
+            requireContext().stopService(Intent(requireContext(), TrackingService::class.java))
+        }
+
     }
 
     override fun onResume() {

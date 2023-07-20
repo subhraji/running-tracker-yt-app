@@ -90,7 +90,7 @@ class TrackingService : LifecycleService() {
         isFirstRun = true
         pauseService()
         postInitialValues()
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
