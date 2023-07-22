@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
+import android.widget.AdapterView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -16,6 +18,7 @@ import com.example.runningappyt.R
 import com.example.runningappyt.adapter.RunAdapter
 import com.example.runningappyt.databinding.FragmentRunBinding
 import com.example.runningappyt.other.Constants.REQUEST_CODE_LOCATION_PERMISSIONS
+import com.example.runningappyt.other.SortType
 import com.example.runningappyt.other.TrackingUtility
 import com.example.runningappyt.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +52,29 @@ class RunFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         requestPermissions()
         setupRecyclerView()
 
-        viewModel.runSortedByDate.observe(viewLifecycleOwner, Observer {
+        when(viewModel.sortType){
+            SortType.DATE -> binding.spFilter.setSelection(0)
+            SortType.RUNNING_TIME -> binding.spFilter.setSelection(1)
+            SortType.DISTANCE -> binding.spFilter.setSelection(2)
+            SortType.AVG_SPEED -> binding.spFilter.setSelection(3)
+            SortType.CALORIES_BURNED -> binding.spFilter.setSelection(4)
+        }
+
+        binding.spFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                when(pos){
+                    0 -> viewModel.sortRuns(SortType.DATE)
+                    1 -> viewModel.sortRuns(SortType.RUNNING_TIME)
+                    2 -> viewModel.sortRuns(SortType.DISTANCE)
+                    3 -> viewModel.sortRuns(SortType.AVG_SPEED)
+                    4 -> viewModel.sortRuns(SortType.CALORIES_BURNED)
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
+
+        viewModel.runs.observe(viewLifecycleOwner, Observer {
             runAdapter.submitList(it)
         })
 
