@@ -46,7 +46,7 @@ import kotlinx.coroutines.delay
 import java.util.Calendar
 import javax.inject.Inject
 import kotlin.math.round
-
+const val CANCEL_TRACKING_DIALOG_TAG = "cancelDialog"
 @AndroidEntryPoint
 class TrackingFragment : Fragment() {
     private var _binding: FragmentTrackingBinding? = null
@@ -119,6 +119,15 @@ class TrackingFragment : Fragment() {
         binding.btnToggleRun.setOnClickListener {
             toggleRun()
         }
+
+        /*if(savedInstanceState != null){
+            val cancelTrackingDialog = parentFragmentManager.findFragmentByTag(
+                CANCEL_TRACKING_DIALOG_TAG) as CancelTrackingDialog?
+            cancelTrackingDialog?.setYesListener {
+                stopRun()
+            }
+        }*/
+
         binding.mapView.getMapAsync {
             map = it
             addAllPolyLines()
@@ -160,10 +169,10 @@ class TrackingFragment : Fragment() {
     }
     private fun updateTracking(isTracking: Boolean){
         this.isTracking = isTracking
-        if(!isTracking){
+        if(!isTracking && curTimeInMillis > 0L){
             binding.btnToggleRun.text = "Start"
             binding.btnFinishRun.visibility = View.VISIBLE
-        }else{
+        }else if(isTracking){
             binding.btnToggleRun.text = "Stop"
             menu?.getItem(0)?.isVisible = true
             binding.btnFinishRun.visibility = View.GONE
@@ -246,7 +255,14 @@ class TrackingFragment : Fragment() {
         }
 
     private fun showCancelTrackingDialog(){
-        val dialog = MaterialAlertDialogBuilder(requireContext(),R.style.AlertDialogTheme)
+        /*CancelTrackingDialog().apply {
+            setYesListener {
+                stopRun()
+            }
+        }.show(parentFragmentManager, CANCEL_TRACKING_DIALOG_TAG)*/
+
+
+        val dialog =MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
             .setTitle("Cancel the run?")
             .setMessage("Are you sure to cancel the run and delete all the data?")
             .setIcon(R.drawable.baseline_delete_24)
@@ -257,7 +273,7 @@ class TrackingFragment : Fragment() {
                 dialogInterface.cancel()
             }
             .create()
-        dialog.show()
+            dialog.show()
     }
 
 
@@ -275,12 +291,10 @@ class TrackingFragment : Fragment() {
     }
 
     private fun stopRun(){
-        if(isMyServiceRunning(TrackingService::class.java)){
-            startCommandToService(ACTION_STOP_SERVICE)
-            findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
-            requireContext().stopService(Intent(requireContext(), TrackingService::class.java))
-        }
-
+        binding.tvTimer.text = "00:00:00:00"
+        startCommandToService(ACTION_STOP_SERVICE)
+        findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
+        requireContext().stopService(Intent(requireContext(), TrackingService::class.java))
     }
 
     override fun onResume() {
